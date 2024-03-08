@@ -32,6 +32,7 @@ impl Config {
 }
 
 //TODO 实现匹配内容高亮(切分为三块,插入ansi序列,重新格式化)
+//! 解决一行只匹配一次的问题
 pub fn search<'a>(query: &str, contents: &str) -> Vec<String> {
     let query = query.to_lowercase();
     let mut lines: Vec<String> = Vec::new();
