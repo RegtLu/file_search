@@ -45,7 +45,7 @@ pub fn search<'a>(query: &str, contents: &str) -> Vec<String> {
             None => (),
         };
     }
-    lines.push("已搜索完文件".to_string());
+    lines.push(format!("已搜索完文件,匹配到{}个结果",lines.len()).to_string());
     lines
 }
 
@@ -54,10 +54,18 @@ mod tests {
     use super::*;
 
     #[test]
-    fn it_works() {
+    fn 成功_搜索到() {
         assert_eq!(
             search("爱我", "我爱你\n你也爱我")[0],
             format!("\x1b[92m> 行1 列1: \x1b[0m我爱你")
+        );
+    }
+
+    #[test]
+    fn 成功_未搜索到() {
+        assert_eq!(
+            search("123", "我爱你\n你也爱我")[0],
+            format!("已搜索完文件,匹配到0个结果")
         );
     }
 }
