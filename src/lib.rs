@@ -31,7 +31,7 @@ impl Config {
     }
 }
 
-//TODO 实现匹配内容高亮
+//TODO 实现匹配内容高亮(切分为三块,插入ansi序列,重新格式化)
 pub fn search<'a>(query: &str, contents: &str) -> Vec<String> {
     let query = query.to_lowercase();
     let mut lines: Vec<String> = Vec::new();
