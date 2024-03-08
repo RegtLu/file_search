@@ -31,29 +31,33 @@ impl Config {
     }
 }
 
-//TODO 实现字符级别定位+匹配内容高亮
+//TODO 实现匹配内容高亮
 pub fn search<'a>(query: &str, contents: &str) -> Vec<String> {
     let query = query.to_lowercase();
     let mut lines: Vec<String> = Vec::new();
-    let mut line_number: i32 = 0;
+    let mut line_number: usize = 0;
+
     for line in contents.lines() {
         line_number = line_number + 1;
-        if line.to_lowercase().contains(&query) {
-            lines.push(format!("\x1b[92m> 行{line_number} : \x1b[0m{line}"))
-        }
+        let a = line.find(&query);
+        let _b = match  a{
+            Some(usize) => lines.push(format!("\x1b[92m> 行{line_number} 列{}: \x1b[0m{line}",Some(usize).as_slice()[0]+1)),
+            None => (),
+        };
     }
+    lines.push("已搜索完文件".to_string());
     lines
 }
 
-pub fn search_new<'a>(query: &str, contents: &str) -> Vec<String> {
-    let query = query.to_lowercase();
-    let mut lines: Vec<String> = Vec::new();
-    let mut line_number: i32 = 0;
-    for line in contents.lines() {
-        line_number = line_number + 1;
-        if line.to_lowercase().contains(&query) {
-            lines.push(format!("\x1b[92m> 行{line_number} : \x1b[0m{line}"))
-        }
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn it_works() {
+        assert_eq!(
+            search("爱我", "我爱你\n你也爱我")[0],
+            format!("\x1b[92m> 行1 列1: \x1b[0m我爱你")
+        );
     }
-    lines
 }
