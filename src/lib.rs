@@ -33,8 +33,9 @@ impl Config {
     }
 }
 
-//TODO 解决一行只匹配一次的问题 => 没有头绪
-
+//TODO  问题#1  解决一行只匹配一次的问题 => 没有头绪
+// !    错误1   有时会出现索引错误,原因未知
+    //TODO  补充    解决以上问题(改为.chars()实现,可能需要自写匹配函数(可能解决))
 pub fn search<'a>(query: &str, contents: &str) -> usize {
     let query = query.to_lowercase();
     let mut line_number: usize = 0;
@@ -45,14 +46,29 @@ pub fn search<'a>(query: &str, contents: &str) -> usize {
         let _b = match a {
             Some(usize) => {
                 result_number = result_number + 1;
+                let content1 = if Some(usize).as_slice()[0] < 30 {
+                    line[..Some(usize).as_slice()[0]].to_string()
+                } else {
+                    "...".to_string()
+                        + &line[Some(usize).as_slice()[0] - 30..Some(usize).as_slice()[0]]
+                            .to_string()
+                };
+                let content3 = if (line.len() - Some(usize).as_slice()[0] - query.len()) < 30 {
+                    line[Some(usize).as_slice()[0] + query.len()..].to_string()
+                } else {
+                    line[Some(usize).as_slice()[0] + query.len()
+                        ..Some(usize).as_slice()[0] + query.len() + 30]
+                        .to_string()
+                        + &"...".to_string()
+                };
                 println!(
-                    "\x1b[32m> 行{} 列{}:\x1b[0m {}\x1b[31;103m{}\x1b[0m{}",
+                    "\x1b[32m> 行{} 字节{}:\x1b[0m {}\x1b[31;103m{}\x1b[0m{}",
                     line_number,
                     Some(usize).as_slice()[0] + 1,
-                    line[0..Some(usize).as_slice()[0]].to_string(),
-                    line[Some(usize).as_slice()[0]..Some(usize).as_slice()[0] + query.len()]
+                    content1,
+                    &line[Some(usize).as_slice()[0]..Some(usize).as_slice()[0] + query.len()]
                         .to_string(),
-                    line[Some(usize).as_slice()[0] + query.len()..].to_string()
+                    content3
                 )
             }
             None => (),
