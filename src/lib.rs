@@ -1,7 +1,13 @@
-use std::{error::Error, fs};
+use std::{error::Error, fs, process};
 
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
-    let contents: String = fs::read_to_string(config.filename)?;
+    let contents = match fs::read_to_string(config.filename) {
+        Ok(c) => c,
+        Err(e) => {
+            println!("读取文件时发生以下错误:{}", e);
+            process::exit(1)
+        }
+    };
     let results = search(&config.query, &contents);
     println!("搜索完文件,匹配到{}个结果", results);
     return Ok(());
