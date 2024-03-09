@@ -33,8 +33,8 @@ impl Config {
     }
 }
 
-//TODO 解决一行只匹配一次的问题
-//TODO 实现流式输出
+//TODO 解决一行只匹配一次的问题 => 没有头绪
+//TODO 实现流式输出 => 将println()移动到search()内
 
 pub struct QueryResult {
     line_number: usize,
