@@ -7,7 +7,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 
     for result in &results {
         println!(
-            "\x1b[34m> 行{} 列{}:\x1b[0m {}",
+            "\x1b[35m> 行{} 列{}:\x1b[0m {}",
             result.line_number, result.character_number, result.content
         );
     }
