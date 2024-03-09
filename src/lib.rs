@@ -34,6 +34,7 @@ impl Config {
 }
 
 //TODO 解决一行只匹配一次的问题
+//TODO 实现流式输出
 
 pub struct QueryResult {
     line_number: usize,
