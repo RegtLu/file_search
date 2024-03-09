@@ -5,9 +5,13 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 
     let results = search(&config.query, &contents);
 
-    for result in results {
-        println!("\x1b[34m> 行{} 列{}:\x1b[0m {}",result.line_number,result.character_number,result.content);
+    for result in &results {
+        println!(
+            "\x1b[34m> 行{} 列{}:\x1b[0m {}",
+            result.line_number, result.character_number, result.content
+        );
     }
+    println!("搜索完文件,匹配到{}个结果", results.len());
     return Ok(());
 }
 
