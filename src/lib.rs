@@ -21,13 +21,13 @@ impl Config {
     pub fn new(mut args: std::env::Args) -> Result<Config, &'static str> {
         args.next();
 
-        let query = match args.next() {
-            Some(val) => val,
-            None => return Err("搜索内容为空\n用法: minigrep.exe 字符串 文件名"),
-        };
         let filename = match args.next() {
             Some(val) => val,
-            None => return Err("文件名为空\n用法: minigrep.exe 字符串 文件名"),
+            None => return Err("文件名为空\n用法: minigrep.exe  文件名 字符串"),
+        };
+        let query = match args.next() {
+            Some(val) => val,
+            None => return Err("搜索内容为空\n用法: minigrep.exe 文件名 字符串"),
         };
         Ok(Config { query, filename })
     }
