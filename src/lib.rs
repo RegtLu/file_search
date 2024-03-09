@@ -33,9 +33,11 @@ impl Config {
     }
 }
 
-//TODO  问题#1  解决一行只匹配一次的问题 => 没有头绪
+//TODO  #1  解决一行只匹配一次的 => 补充1
 // !    错误1   有时会出现索引错误,原因未知(怀疑是行中存在英文字符导致)
-    //TODO  补充    解决以上问题(改为.chars()实现,可能需要自写匹配函数(可能解决))
+    //TODO  补充1    解决以上(改为.chars()实现,可能需要自写匹配函数(可能解决 #1 ))
+//TODO  #2  支持正则表达式搜索 => 自写/crate
+//TODO  #3  支持gui => 基于crate
 pub fn search<'a>(query: &str, contents: &str) -> usize {
     let query = query.to_lowercase();
     let mut line_number: usize = 0;
