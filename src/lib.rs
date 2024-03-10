@@ -35,6 +35,7 @@ impl Config {
 //解决  TODO  #1  解决一行只匹配一次的 => 使用split/match_indices进行处理
 //TODO  #2  支持正则表达式搜索 => 自写/crate
 //TODO  #3  支持gui => 基于crate
+//TODO  #4  搜索结果显示时,应输出原始文本,而非lower_case文本    =>  to_lowercase()赋值新字符串,并使用match_indice替换split,用索引实现get_formatted_string()
 pub fn search<'a>(query: &str, contents: &str) -> usize {
     let query = query.to_lowercase();
     let contents = contents.to_lowercase();
