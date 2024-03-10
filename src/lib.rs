@@ -32,10 +32,6 @@ impl Config {
         Ok(Config { query, filename })
     }
 }
-
-//TODO  #1  解决一行只匹配一次的 => 补充1
-// !    错误1   有时会出现索引错误,原因未知(怀疑是行中存在英文字符导致)
-    //TODO  补充1    解决以上(改为.chars()实现,可能需要自写匹配函数(可能解决 #1 ))
 //TODO  #2  支持正则表达式搜索 => 自写/crate
 //TODO  #3  支持gui => 基于crate
 pub fn search<'a>(query: &str, contents: &str) -> usize {
@@ -44,37 +40,50 @@ pub fn search<'a>(query: &str, contents: &str) -> usize {
     let mut result_number: usize = 0;
     for line in contents.lines() {
         line_number = line_number + 1;
-        let a = line.find(&query);
-        let _b = match a {
-            Some(usize) => {
-                result_number = result_number + 1;
-                let content1 = if Some(usize).as_slice()[0] < 30 {
-                    line[..Some(usize).as_slice()[0]].to_string()
-                } else {
-                    "...".to_string()
-                        + &line[Some(usize).as_slice()[0] - 30..Some(usize).as_slice()[0]]
-                            .to_string()
-                };
-                let content3 = if (line.len() - Some(usize).as_slice()[0] - query.len()) < 30 {
-                    line[Some(usize).as_slice()[0] + query.len()..].to_string()
-                } else {
-                    line[Some(usize).as_slice()[0] + query.len()
-                        ..Some(usize).as_slice()[0] + query.len() + 30]
-                        .to_string()
-                        + &"...".to_string()
-                };
-                println!(
-                    "\x1b[32m> 行{} 字节{}:\x1b[0m {}\x1b[31;103m{}\x1b[0m{}",
-                    line_number,
-                    Some(usize).as_slice()[0] + 1,
-                    content1,
-                    &line[Some(usize).as_slice()[0]..Some(usize).as_slice()[0] + query.len()]
-                        .to_string(),
-                    content3
-                )
-            }
-            None => (),
-        };
+        let result = find_string(&query,&line);
+        if result.len()==1{
+            ()
+        }else {
+            result_number = result_number+result.len()-1;
+            let line = get_formatted_string(&query, &result);
+            println!("\x1b[35m> 行{line_number} :\x1b[0m {}",line)
+        }
+        
     }
-    result_number
+    return result_number
+}
+
+fn find_string(query: &str, contents: &str) -> Vec<String> {
+    let mut result: Vec<String> = Vec::<String>::new();
+    for zip in contents.split(query) {
+        result.push(zip.to_string())
+    }
+    return result;
+}
+fn get_formatted_string(query:&str,contents:&Vec<String>) -> String{
+    let mut line: String = String::new();
+    for index in 0..contents.len() - 1 {
+        line = line + &contents[index] + "\x1b[31;103m" + query + "\x1b[0m";
+    }
+    line = line + &contents[contents.len()-1];
+    return line
+}
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn 多匹配() {
+        let query = "我";
+        let contents = "我141@Löwe 老虎我 Léopard Gepardia我";
+        let result = find_string(query, contents);
+        let mut line: String = String::new();
+        for index in 0..result.len() - 1 {
+            line = line + &result[index] + "\x1b[31;103m" + query + "\x1b[0m";
+        }
+        line = line + &result[result.len()-1];
+        println!("{}", line);
+
+        assert_eq!(vec!["", "141@Löwe 老虎", " Léopard Gepardia", ""], result);
+    }
 }
