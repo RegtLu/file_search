@@ -32,6 +32,8 @@ impl Config {
         Ok(Config { query, filename })
     }
 }
+
+
 //解决  TODO  #1  解决一行只匹配一次的 => 使用split/match_indices进行处理
 //TODO  #2  支持正则表达式搜索 => 自写/crate
 //TODO  #3  支持gui => 基于crate
@@ -55,7 +57,6 @@ pub fn search<'a>(query: &str, contents: &str) -> usize {
     }
     return result_number;
 }
-
 fn find_string(query: &str, contents: &str) -> Vec<String> {
     let mut result: Vec<String> = Vec::<String>::new();
     for zip in contents.split(query) {
@@ -71,22 +72,25 @@ fn get_formatted_string(query: &str, contents: &Vec<String>) -> String {
     line = line + &contents[contents.len() - 1];
     return line;
 }
+
+
 #[cfg(test)]
 mod tests {
     use super::*;
-
     #[test]
-    fn 多匹配() {
+    fn test_find_string() {
         let query = "我";
         let contents = "我141@Löwe 老虎我 Léopard Gepardia我";
         let result = find_string(query, contents);
-        let mut line: String = String::new();
-        for index in 0..result.len() - 1 {
-            line = line + &result[index] + "\x1b[31;103m" + query + "\x1b[0m";
-        }
-        line = line + &result[result.len() - 1];
-        println!("{}", line);
 
         assert_eq!(vec!["", "141@Löwe 老虎", " Léopard Gepardia", ""], result);
+    }
+    #[test]
+    fn test_find_get_formatted_string() {
+        let query = "我";
+        let contents = vec!["".to_string(), "141@Löwe 老虎".to_string(), " Léopard Gepardia".to_string(), "".to_string()];
+        let result = get_formatted_string(&query, &contents);
+
+        assert_eq!("\x1b[31;103m我\x1b[0m141@Löwe 老虎\x1b[31;103m我\x1b[0m Léopard Gepardia\x1b[31;103m我\x1b[0m", result);
     }
 }
