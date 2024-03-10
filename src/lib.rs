@@ -40,17 +40,16 @@ pub fn search<'a>(query: &str, contents: &str) -> usize {
     let mut result_number: usize = 0;
     for line in contents.lines() {
         line_number = line_number + 1;
-        let result = find_string(&query,&line);
-        if result.len()==1{
+        let result = find_string(&query, &line);
+        if result.len() == 1 {
             ()
-        }else {
-            result_number = result_number+result.len()-1;
+        } else {
+            result_number = result_number + result.len() - 1;
             let line = get_formatted_string(&query, &result);
-            println!("\x1b[35m> 行{line_number} :\x1b[0m {}",line)
+            println!("\x1b[35m> 行{line_number} :\x1b[0m {}", line)
         }
-        
     }
-    return result_number
+    return result_number;
 }
 
 fn find_string(query: &str, contents: &str) -> Vec<String> {
@@ -60,13 +59,13 @@ fn find_string(query: &str, contents: &str) -> Vec<String> {
     }
     return result;
 }
-fn get_formatted_string(query:&str,contents:&Vec<String>) -> String{
+fn get_formatted_string(query: &str, contents: &Vec<String>) -> String {
     let mut line: String = String::new();
     for index in 0..contents.len() - 1 {
         line = line + &contents[index] + "\x1b[31;103m" + query + "\x1b[0m";
     }
-    line = line + &contents[contents.len()-1];
-    return line
+    line = line + &contents[contents.len() - 1];
+    return line;
 }
 #[cfg(test)]
 mod tests {
@@ -81,7 +80,7 @@ mod tests {
         for index in 0..result.len() - 1 {
             line = line + &result[index] + "\x1b[31;103m" + query + "\x1b[0m";
         }
-        line = line + &result[result.len()-1];
+        line = line + &result[result.len() - 1];
         println!("{}", line);
 
         assert_eq!(vec!["", "141@Löwe 老虎", " Léopard Gepardia", ""], result);
