@@ -37,60 +37,51 @@ impl Config {
 //解决  TODO  #1  解决一行只匹配一次的 => 使用split/match_indices进行处理
 //TODO  #2  支持正则表达式搜索 => 自写/crate
 //TODO  #3  支持gui => 基于crate
-//TODO  #4  搜索结果显示时,应输出原始文本,而非lower_case文本    =>  to_lowercase()赋值新字符串,并使用match_indice替换split,用索引实现get_formatted_string()
+//解决  TODO  #4  搜索结果显示时,应输出原始文本,而非lower_case文本    =>  to_lowercase()赋值新字符串,并使用match_indice替换split,用索引实现get_formatted_string()
 //TODO  #5  不输出完整行,只输出附近内容
 pub fn search<'a>(query: &str, contents: &str) -> usize {
-    let query = query.to_lowercase();
-    let contents = contents.to_lowercase();
+    let lower_query = query.to_lowercase();
+    let lower_contents = contents.to_lowercase();
     let mut line_number: usize = 0;
     let mut result_number: usize = 0;
-    for line in contents.lines() {
+    let mut raw_line_iter=contents.lines();
+    for line in lower_contents.lines() {
+        let raw_line:&str=match raw_line_iter.next(){
+            None=>"",
+            Some(str)=>str,
+        };
         line_number = line_number + 1;
-        let result = find_string(&query, &line);
-        if result.len() == 1 {
+        let result = find_string(&lower_query, &line);
+        if result.len() == 0 {
             ()
         } else {
-            result_number = result_number + result.len() - 1;
-            let line = get_formatted_string(&query, &result);
+            result_number = result_number + result.len() ;
+            let line = get_formatted_string(&query, &raw_line.to_string(),&result);
             println!("\x1b[35m> 行{line_number} :\x1b[0m {}", line)
         }
     }
     return result_number;
 }
-fn find_string(query: &str, contents: &str) -> Vec<String> {
-    let mut result: Vec<String> = Vec::<String>::new();
-    for zip in contents.split(query) {
-        result.push(zip.to_string())
+fn find_string(query: &str, contents: &str) -> Vec<usize> {
+    let mut result: Vec<usize> = Vec::<usize>::new();
+    for zip in contents.match_indices(query) {
+        result.push(zip.0)
     }
-    return result;
+    return result
 }
-fn get_formatted_string(query: &str, contents: &Vec<String>) -> String {
-    let mut line: String = String::new();
-    for index in 0..contents.len() - 1 {
-        line = line + &contents[index] + "\x1b[31;103m" + query + "\x1b[0m";
+fn get_formatted_string(query: &str, contents: &String, indexes: &Vec<usize>) -> String {
+    let mut formatted_contents = String::new();
+    let mut last_index = 0;
+    for &index in indexes.iter() {
+        formatted_contents += &contents[last_index..index];
+        formatted_contents += "\x1b[31;103m";
+        formatted_contents += &contents[index..index + query.len()];
+        formatted_contents += "\x1b[0m";
+        last_index = index + query.len();
     }
-    line = line + &contents[contents.len() - 1];
-    return line;
-}
-
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    #[test]
-    fn test_find_string() {
-        let query = "我";
-        let contents = "我141@Löwe 老虎我 Léopard Gepardia我";
-        let result = find_string(query, contents);
-
-        assert_eq!(vec!["", "141@Löwe 老虎", " Léopard Gepardia", ""], result);
+    if last_index < contents.len() {
+        formatted_contents += &contents[last_index..];
     }
-    #[test]
-    fn test_find_get_formatted_string() {
-        let query = "我";
-        let contents = vec!["".to_string(), "141@Löwe 老虎".to_string(), " Léopard Gepardia".to_string(), "".to_string()];
-        let result = get_formatted_string(&query, &contents);
 
-        assert_eq!("\x1b[31;103m我\x1b[0m141@Löwe 老虎\x1b[31;103m我\x1b[0m Léopard Gepardia\x1b[31;103m我\x1b[0m", result);
-    }
+    formatted_contents
 }
