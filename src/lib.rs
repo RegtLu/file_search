@@ -1,5 +1,6 @@
 use std::{error::Error, fs, process};
 
+///识别非UTF-8文本文件 并 输出统计信息
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let contents = match fs::read_to_string(config.filename) {
         Ok(c) => c,
@@ -12,11 +13,12 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     println!("搜索完文件,匹配到{}个结果", results);
     return Ok(());
 }
-
+///包装命令行参数
 pub struct Config {
     pub query: String,
     pub filename: String,
 }
+///抛出错误(命令行参数缺失)
 impl Config {
     pub fn new(mut args: std::env::Args) -> Result<Config, &'static str> {
         args.next();
@@ -39,6 +41,8 @@ impl Config {
 //TODO  #3  支持gui => 基于crate
 //解决  TODO  #4  搜索结果显示时,应输出原始文本,而非lower_case文本    =>  to_lowercase()赋值新字符串,并使用match_indice替换split,用索引实现get_formatted_string()
 //TODO  #5  不输出完整行,只输出附近内容
+
+///在文件中搜索字符串
 pub fn search<'a>(query: &str, contents: &str) -> usize {
     let lower_query = query.to_lowercase();
     let lower_contents = contents.to_lowercase();
@@ -62,6 +66,7 @@ pub fn search<'a>(query: &str, contents: &str) -> usize {
     }
     return result_number;
 }
+///在单行文本中搜索字符串
 fn find_string(query: &str, contents: &str) -> Vec<usize> {
     let mut result: Vec<usize> = Vec::<usize>::new();
     for zip in contents.match_indices(query) {
@@ -69,6 +74,7 @@ fn find_string(query: &str, contents: &str) -> Vec<usize> {
     }
     return result
 }
+///输出格式化后的搜索结果
 fn get_formatted_string(query: &str, contents: &String, indexes: &Vec<usize>) -> String {
     let mut formatted_contents = String::new();
     let mut last_index = 0;
