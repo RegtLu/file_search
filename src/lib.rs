@@ -35,7 +35,6 @@ impl Config {
     }
 }
 
-
 //解决  TODO  #1  解决一行只匹配一次的 => 使用split/match_indices进行处理
 //TODO  #2  支持正则表达式搜索 => 自写/crate
 //TODO  #3  支持gui => 基于crate
@@ -48,19 +47,19 @@ pub fn search<'a>(query: &str, contents: &str) -> usize {
     let lower_contents = contents.to_lowercase();
     let mut line_number: usize = 0;
     let mut result_number: usize = 0;
-    let mut raw_line_iter=contents.lines();
+    let mut raw_line_iter = contents.lines();
     for line in lower_contents.lines() {
-        let raw_line:&str=match raw_line_iter.next(){
-            None=>"",
-            Some(str)=>str,
+        let raw_line: &str = match raw_line_iter.next() {
+            None => "",
+            Some(str) => str,
         };
         line_number = line_number + 1;
         let result = find_string(&lower_query, &line);
         if result.len() == 0 {
             ()
         } else {
-            result_number = result_number + result.len() ;
-            let line = get_formatted_string(&query, &raw_line.to_string(),&result);
+            result_number = result_number + result.len();
+            let line = get_formatted_string(&query, &raw_line.to_string(), &result);
             println!("\x1b[35m> 行{line_number} :\x1b[0m {}", line)
         }
     }
@@ -72,7 +71,7 @@ fn find_string(query: &str, contents: &str) -> Vec<usize> {
     for zip in contents.match_indices(query) {
         result.push(zip.0)
     }
-    return result
+    return result;
 }
 ///输出格式化后的搜索结果
 fn get_formatted_string(query: &str, contents: &String, indexes: &Vec<usize>) -> String {
