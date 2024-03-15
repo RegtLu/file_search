@@ -40,6 +40,7 @@ impl Config {
 //TODO  #3  支持gui => 基于crate
 //解决  TODO  #4  搜索结果显示时,应输出原始文本,而非lower_case文本    =>  to_lowercase()赋值新字符串,并使用match_indice替换split,用索引实现get_formatted_string()
 //TODO  #5  不输出完整行,只输出附近内容
+//TODO  #6  当ANSI转义序列跨越两行时,第二行中结束序列失效
 
 ///在文件中搜索字符串
 pub fn search<'a>(query: &str, contents: &str) -> usize {
