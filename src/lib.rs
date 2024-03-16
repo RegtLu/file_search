@@ -1,4 +1,5 @@
 use std::{error::Error, fs, process};
+use std::time::Instant;
 
 ///识别非UTF-8文本文件 并 输出统计信息
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
@@ -9,8 +10,10 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
             process::exit(1)
         }
     };
+    let start = Instant::now();
     let results = search(&config.query, &contents);
-    println!("搜索完文件,匹配到{}个结果", results);
+    let duration = start.elapsed();
+    println!("搜索完文件,匹配到{}个结果,用时{:?}", results,duration);
     return Ok(());
 }
 ///包装命令行参数
